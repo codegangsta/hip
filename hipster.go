@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"github.com/codegangsta/cli"
 	"net/http"
@@ -33,11 +34,14 @@ func main() {
 					Usage:     "Make a get request",
 					Action: func(c *cli.Context) {
 						url := address + c.Args()[0]
-						resp, err := http.Get(url)
+						res, err := http.Get(url)
 						if err != nil {
 							fmt.Println(err)
 						}
-						fmt.Println(resp)
+						buf := new(bytes.Buffer)
+						buf.ReadFrom(res.Body)
+						s := buf.String()
+						fmt.Println(s)
 					},
 				},
 			}
