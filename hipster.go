@@ -2,10 +2,13 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/bobappleyard/readline"
 	"github.com/codegangsta/cli"
+	"github.com/wsxiaoys/terminal/color"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -36,11 +39,17 @@ func main() {
 					Action: func(c *cli.Context) {
 						url := address + c.Args()[0]
 						res, err := http.Get(url)
+
 						if err != nil {
 							fmt.Println(err)
+							os.Exit(1)
 						}
+
+						printResponse(res)
+
 						buf := new(bytes.Buffer)
-						buf.ReadFrom(res.Body)
+						body, _ := ioutil.ReadAll(res.Body)
+						json.Indent(buf, body, "", "    ")
 						s := buf.String()
 						fmt.Println(s)
 					},
@@ -62,4 +71,22 @@ func main() {
 		}
 	}
 	app.Run(os.Args)
+}
+
+func printResponse(res *http.Response) {
+	color.Println(res.Proto, statusColor(res.StatusCode)+res.Status)
+
+	for k := range res.Header {
+		color.Println(k+":", "@{!c}"+res.Header.Get(k))
+	}
+
+	fmt.Println("")
+}
+
+func statusColor(code int) string {
+	if code >= 400 {
+		return "@r"
+	} else {
+		return "@g"
+	}
 }
