@@ -1,10 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
+	"github.com/bobappleyard/readline"
 	"github.com/codegangsta/cli"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -46,24 +47,19 @@ func main() {
 				},
 			}
 
-			fmt.Print("> ")
-			console.Run(strings.Fields("cmd " + readLine()))
+			line, err := readline.String("> ")
+			if err == io.EOF {
+				break
+
+			}
+			if err != nil {
+				fmt.Println("error: ", err)
+				break
+
+			}
+			readline.AddHistory(line)
+			console.Run(strings.Fields("cmd " + line))
 		}
 	}
 	app.Run(os.Args)
-}
-
-func readLine() string {
-	buf := bufio.NewReader(os.Stdin)
-	line, err := buf.ReadString('\n')
-
-	if err != nil {
-		panic(err)
-
-	}
-
-	line = strings.TrimRight(line, "\n")
-
-	return line
-
 }
