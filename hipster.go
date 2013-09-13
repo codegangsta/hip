@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/codegangsta/cli"
+	"net/http"
 	"os"
 	"strings"
-  "net/http"
 )
 
 func main() {
@@ -32,12 +32,12 @@ func main() {
 					ShortName: "g",
 					Usage:     "Make a get request",
 					Action: func(c *cli.Context) {
-            url := address+c.Args()[0]
-            resp, err := http.Get(url)
-            if err != nil {
-              fmt.Println(err)
-            }
-            fmt.Println(resp)
+						url := address + c.Args()[0]
+						resp, err := http.Get(url)
+						if err != nil {
+							fmt.Println(err)
+						}
+						fmt.Println(resp)
 					},
 				},
 			}
