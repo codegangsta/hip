@@ -6,6 +6,7 @@ import (
 	"github.com/codegangsta/cli"
 	"os"
 	"strings"
+  "net/http"
 )
 
 func main() {
@@ -31,7 +32,12 @@ func main() {
 					ShortName: "g",
 					Usage:     "Make a get request",
 					Action: func(c *cli.Context) {
-						fmt.Println("Made a get request", address+c.Args()[0])
+            url := address+c.Args()[0]
+            resp, err := http.Get(url)
+            if err != nil {
+              fmt.Println(err)
+            }
+            fmt.Println(resp)
 					},
 				},
 			}
