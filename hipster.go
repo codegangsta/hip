@@ -16,36 +16,36 @@ import (
 )
 
 func main() {
-  address := ""
-  commands := []cli.Command{
-    {
-      Name:      "get",
-      ShortName: "g",
-      Usage:     "Make a get request",
-      Action: func(c *cli.Context) {
-        url := address + c.Args()[0]
-        res, err := http.Get(url)
+	address := ""
+	commands := []cli.Command{
+		{
+			Name:      "get",
+			ShortName: "g",
+			Usage:     "Make a get request",
+			Action: func(c *cli.Context) {
+				url := address + c.Args()[0]
+				res, err := http.Get(url)
 
-        if err != nil {
-          fmt.Println(err)
-          os.Exit(1)
-        }
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
+				}
 
-        printResponse(res)
+				printResponse(res)
 
-        buf := new(bytes.Buffer)
-        body, _ := ioutil.ReadAll(res.Body)
-        json.Indent(buf, body, "", "    ")
-        s := buf.String()
-        s = strings.Replace(s, "@", "@@", -1)
-        reg, _ := regexp.Compile("(\".*?:)(.*).?([,\r,\n])")
-        s = reg.ReplaceAllString(s, "@b$1@c$2@|$3")
-        color.Println(s)
-      },
-    },
-  }
+				buf := new(bytes.Buffer)
+				body, _ := ioutil.ReadAll(res.Body)
+				json.Indent(buf, body, "", "    ")
+				s := buf.String()
+				s = strings.Replace(s, "@", "@@", -1)
+				reg, _ := regexp.Compile("(\".*?:)(.*).?([,\r,\n])")
+				s = reg.ReplaceAllString(s, "@b$1@c$2@|$3")
+				color.Println(s)
+			},
+		},
+	}
 	app := cli.NewApp()
-  app.Commands = commands
+	app.Commands = commands
 	app.Version = "0.0.1"
 	app.Action = func(ctx *cli.Context) {
 		if len(ctx.Args()) == 0 {
