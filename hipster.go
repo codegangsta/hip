@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -51,7 +52,10 @@ func main() {
 						body, _ := ioutil.ReadAll(res.Body)
 						json.Indent(buf, body, "", "    ")
 						s := buf.String()
-						fmt.Println(s)
+						s = strings.Replace(s, "@", "@@", -1)
+						reg, _ := regexp.Compile("(\".*?:)(.*).?([,\r,\n])")
+						s = reg.ReplaceAllString(s, "@b$1@c$2@|$3")
+						color.Println(s)
 					},
 				},
 			}
@@ -85,8 +89,8 @@ func printResponse(res *http.Response) {
 
 func statusColor(code int) string {
 	if code >= 400 {
-		return "@r"
+		return "@{r!}"
 	} else {
-		return "@g"
+		return "@{g!}"
 	}
 }
